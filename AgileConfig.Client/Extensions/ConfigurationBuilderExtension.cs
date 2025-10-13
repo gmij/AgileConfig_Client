@@ -63,7 +63,7 @@ namespace Microsoft.AspNetCore.Hosting
         }
 
         /// <summary>
-        /// 先尝试从本地的配置文件读取参数，然后合并 setOp Action的赋值
+        /// Load parameters from the local configuration file first, then merge values set by the action.
         /// </summary>
         /// <param name="builder"></param>
         /// <param name="setOp"></param>

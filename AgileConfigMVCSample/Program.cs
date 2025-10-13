@@ -18,11 +18,11 @@ namespace AgileConfigMVCSample
             Host.CreateDefaultBuilder(args)
             .ConfigureAppConfiguration((context, config) =>
             {
-                //new一个client实例
-                //使用无参构造函数会自动读取本地appsettings.json文件的AgileConfig节点的配置
+                // Create a client instance.
+                // The parameterless constructor automatically reads the AgileConfig section from appsettings.json.
                 var configClient = new ConfigClient();
                
-                //注册配置项reloaded事件
+                // Register for configuration reload events.
                 configClient.ReLoaded += (arg) =>
                 {
                     foreach (var item in arg.NewConfigs)
@@ -31,7 +31,7 @@ namespace AgileConfigMVCSample
                     }
                 };
 
-                //使用AddAgileConfig配置一个新的IConfigurationSource
+                // Add an AgileConfig-backed IConfigurationSource.
                 config.AddAgileConfig(configClient);
             })
                 .ConfigureWebHostDefaults(webBuilder =>

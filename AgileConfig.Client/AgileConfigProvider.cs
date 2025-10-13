@@ -19,7 +19,7 @@ namespace AgileConfig.Client
         }
 
         /// <summary>
-        /// load方法调用ConfigClient的Connect方法,Connect方法会在连接成功后拉取所有的配置。
+        /// `Load` calls `ConfigClient.ConnectAsync`, which fetches all configuration after establishing the connection.
         /// </summary>
         public override void Load()
         {

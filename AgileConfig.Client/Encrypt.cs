@@ -25,7 +25,7 @@ namespace AgileConfig.Client
             }
         }
         /// <summary>
-        /// Aes ECB PKCS7Padding(PKCS5Padding) 加密 （与Java程序对接可使用）
+        /// AES ECB with PKCS7Padding (PKCS5Padding) encryption, compatible with Java clients.
         /// </summary>
         /// <param name="key"></param>
         /// <param name="rawData"></param>
@@ -51,7 +51,7 @@ namespace AgileConfig.Client
             return Convert.ToBase64String(resultArray);
         }
         /// <summary>
-        /// Aes ECB PKCS7Padding(PKCS5Padding) 解密 （与Java程序对接可使用）
+        /// AES ECB with PKCS7Padding (PKCS5Padding) decryption, compatible with Java clients.
         /// </summary>
         /// <param name="key"></param>
         /// <param name="base64Data"></param>

@@ -26,12 +26,12 @@ namespace AgileConfig.Client.RegisterCenter
     public class ServiceRegisterInfo: ServiceInfo
     {
         /// <summary>
-        /// 健康检测地址
+        /// Health-check endpoint.
         /// </summary>
         public string CheckUrl { get; set; } = "";
 
         /// <summary>
-        /// 服务不健康的时候通知地址
+        /// Notification URL invoked when the service becomes unhealthy.
         /// </summary>
         public string AlarmUrl { get; set; } = "";
 

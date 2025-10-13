@@ -27,7 +27,7 @@ namespace AgileConfig.Client.RegisterCenter
             logger.LogInformation("try to register serviceinfo to server .");
 
             await _registerService.RegisterAsync();
-            //客户端心跳
+            // Start the client heartbeat.
             _heartbeatService.Start(
                 () =>
                 {

@@ -17,7 +17,8 @@ namespace AgileConfigWPFSample
         public static ConfigClient ConfigClient { get; private set; }
         private void Application_Startup(object sender, StartupEventArgs e)
         {
-            //跟控制台项目一样，appid等信息取决于你如何获取。你可以写死，可以从配置文件读取，可以从别的web service读取。
+            // Similar to a console project, decide how to obtain appId and related settings:
+            // hard-code them, read from configuration, or fetch from another service.
             var appId = "test_app";
             var secret = "test_app";
             var nodes = "http://agileconfig-server.xbaby.xyz/";

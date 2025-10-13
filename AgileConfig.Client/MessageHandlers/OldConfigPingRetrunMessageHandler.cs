@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 namespace AgileConfig.Client.MessageHandlers
 {
     /// <summary>
-    /// 老版本的服务端回复配置client的心跳消息的处理类
+    /// Handler for legacy heartbeat responses from the configuration server.
     /// </summary>
     class OldConfigPingRetrunMessageHandler
     {
@@ -26,7 +26,7 @@ namespace AgileConfig.Client.MessageHandlers
             var localVersion = client.DataMd5Version();
             if (version != localVersion)
             {
-                //如果数据库版本跟本地版本不一致则直接全部更新
+                // Reload everything when the server version differs from the local copy.
                 await client.Load();
             }
         }

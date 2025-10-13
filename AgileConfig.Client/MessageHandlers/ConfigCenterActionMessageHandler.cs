@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace AgileConfig.Client.MessageHandlers
 {
     /// <summary>
-    /// 服务端回复配置client的action消息的处理类
+    /// Handler for action messages sent by the configuration server.
     /// </summary>
     class ConfigCenterActionMessageHandler
     {

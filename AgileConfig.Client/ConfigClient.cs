@@ -37,8 +37,10 @@ namespace AgileConfig.Client
         private string LocalCacheFileName => Path.Combine(_options.CacheDirectory, $"{_options.AppId}.agileconfig.client.configs.cache");
 
         /// <summary>
-        /// client的实例对象，每次new的时候构造函数会吧this直接赋值给Instance，
-        /// 一般来说你可以直接使用这个属性来拿到client对象，但是如果你手动new多个client的话，这个Instance代表最后new的那一个client，强烈不建议这么玩。
+        /// Singleton-like access to the most recently created client instance.
+        /// Each constructor assigns `this` to `Instance`. Creating multiple clients
+        /// will therefore cause `Instance` to reference the last one, so avoid
+        /// instantiating more than one client manually.
         /// </summary>
         public static IConfigClient Instance { get; private set; }
 
@@ -55,7 +57,7 @@ namespace AgileConfig.Client
             {
                 if (_options.Logger == null)
                 {
-                    // 给一个默认的 console logger
+                    // Provide a default console logger if none is supplied.
                     return ConfigClientOptions.DefaultConsoleLogger;
                 }
 
@@ -85,7 +87,7 @@ namespace AgileConfig.Client
         }
 
         /// <summary>
-        /// http 超时时间 , 单位秒 , 默认100
+        /// HTTP timeout in seconds (default 100).
         /// </summary>
         public int HttpTimeout
         {
@@ -94,12 +96,12 @@ namespace AgileConfig.Client
         }
 
         /// <summary>
-        /// 是否读取的事本地缓存的配置
+        /// Indicates whether the configuration was loaded from the local cache.
         /// </summary>
         public bool IsLoadFromLocal => _isLoadFromLocal;
 
         /// <summary>
-        /// 最新的配置(全量)被加载到本地后触发。
+        /// Raised after the latest full configuration has been loaded locally.
         /// </summary>
         public event Action<ConfigReloadedArgs> ReLoaded
         {
@@ -108,7 +110,7 @@ namespace AgileConfig.Client
         }
 
         /// <summary>
-        /// 配置项修改事件
+        /// Event raised when configuration items change.
         /// </summary>
         [Obsolete("ConfigChanged event will be obsolete, use ReLoaded event instead of.")]
         public event Action<ConfigChangedArg> ConfigChanged
@@ -118,7 +120,7 @@ namespace AgileConfig.Client
         }
 
         /// <summary>
-        /// 所有的配置项最后都会转换为字典
+        /// All configuration entries are ultimately stored in this dictionary.
         /// </summary>
         public ConcurrentDictionary<string, string> Data => _data;
 
@@ -139,7 +141,7 @@ namespace AgileConfig.Client
         }
 
         /// <summary>
-        /// 根据键值获取配置值
+        /// Get a configuration value by key.
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
@@ -168,7 +170,7 @@ namespace AgileConfig.Client
         }
 
         /// <summary>
-        /// 保证cache文件夹存在
+        /// Ensure the cache directory exists.
         /// </summary>
         private void EnsureCacheDir()
         {
@@ -186,7 +188,7 @@ namespace AgileConfig.Client
             }
 
             this.SetOptions(options);
-            //兼容老版本的 ConfigChanged 事件
+            // Backward compatibility for the legacy ConfigChanged event.
             this._options.ReLoaded += (_) =>
             {
                 this._options.ConfigChanged?.Invoke(new ConfigChangedArg(ActionConst.Reload, ""));
@@ -201,7 +203,7 @@ namespace AgileConfig.Client
 
             var options = ConfigClientOptions.FromLocalAppsettings(json);
             this.SetOptions(options);
-            //兼容老版本的 ConfigChanged 事件
+            // Backward compatibility for the legacy ConfigChanged event.
             this._options.ReLoaded += (_) =>
             {
                 this._options.ConfigChanged?.Invoke(new ConfigChangedArg(ActionConst.Reload, ""));
@@ -226,7 +228,7 @@ namespace AgileConfig.Client
             var options = ConfigClientOptions.FromConfiguration(configuration);
             options.Logger = logger;
             this.SetOptions(options);
-            //兼容老版本的 ConfigChanged 事件
+            // Backward compatibility for the legacy ConfigChanged event.
             this._options.ReLoaded += (_) =>
             {
                 this._options.ConfigChanged?.Invoke(new ConfigChangedArg(ActionConst.Reload, ""));
@@ -252,7 +254,7 @@ namespace AgileConfig.Client
             options.ENV = env;
             options.Logger = logger;
             this.SetOptions(options);
-            //兼容老版本的 ConfigChanged 事件
+            // Backward compatibility for the legacy ConfigChanged event.
             this._options.ReLoaded += (_) =>
             {
                 this._options.ConfigChanged?.Invoke(new ConfigChangedArg(ActionConst.Reload, ""));
@@ -261,7 +263,7 @@ namespace AgileConfig.Client
         }
 
         /// <summary>
-        /// 获取分组配置信息
+        /// Retrieve configuration items by group name.
         /// </summary>
         /// <param name="groupName"></param>
         /// <returns></returns>
@@ -276,7 +278,7 @@ namespace AgileConfig.Client
         }
 
         /// <summary>
-        /// 连接服务端
+        /// Connect to the configuration server.
         /// </summary>
         /// <returns></returns>
         public async Task<bool> ConnectAsync()
@@ -302,13 +304,13 @@ namespace AgileConfig.Client
             }
 
             var connected = await TryConnectWebsocketAsync(_websocketClient).ConfigureAwait(false);
-            await Load();//不管websocket是否成功，都去拉一次配置
+            await Load();//Always pull configuration even if WebSocket setup fails.
             if (connected)
             {
                 HandleWebsocketMessageAsync();
                 WebsocketHeartbeatAsync();
             }
-            //设置自动重连
+            // Enable automatic reconnection.
             AutoReConnect();
 
             return connected;
@@ -350,7 +352,7 @@ namespace AgileConfig.Client
 
             if (failCount == randomServer.ServerCount)
             {
-                //连接所有的服务器都失败了。
+                // Failed to connect to every server.
                 this.Status = ConnectStatus.Disconnected;
                 return false;
             }
@@ -360,7 +362,7 @@ namespace AgileConfig.Client
         }
 
         /// <summary>
-        /// 构造websocket连接的url
+        /// Build the WebSocket connection URL.
         /// </summary>
         /// <param name="server"></param>
         /// <param name="clientName"></param>
@@ -398,7 +400,8 @@ namespace AgileConfig.Client
         }
 
         /// <summary>
-        /// 开启一个线程来初始化Websocket Client，并且5s一次进行检查是否连接打开状态，如果不是则尝试重连。
+        /// Start a background task that initializes the WebSocket client and
+        /// checks the connection every five seconds, reconnecting if needed.
         /// </summary>
         /// <returns></returns>
         private void AutoReConnect()
@@ -454,7 +457,7 @@ namespace AgileConfig.Client
             return "Basic " + Convert.ToBase64String(data);
         }
         /// <summary>
-        /// 开启一个线程30s进行一次心跳
+        /// Start a background task that sends a heartbeat every 30 seconds.
         /// </summary>
         /// <returns></returns>
         public void WebsocketHeartbeatAsync()
@@ -475,7 +478,7 @@ namespace AgileConfig.Client
                     {
                         try
                         {
-                            //这里由于多线程的问题，WebsocketClient有可能在上一个if判断成功后被置空或者断开，所以需要try一下避免线程退出
+                            // Guard against race conditions where the client becomes null or closes between checks.
                             await _websocketClient.SendAsync(new ArraySegment<byte>(data, 0, data.Length), WebSocketMessageType.Text, true,
                                     CancellationToken.None).ConfigureAwait(false);
                             Logger?.LogTrace("client send 'ping' to server by websocket .");
@@ -489,7 +492,7 @@ namespace AgileConfig.Client
             }, TaskCreationOptions.LongRunning).ConfigureAwait(false);
         }
         /// <summary>
-        /// 开启一个线程对服务端推送的websocket message进行处理
+        /// Start a background task that processes WebSocket messages from the server.
         /// </summary>
         /// <returns></returns>
         private void HandleWebsocketMessageAsync()
@@ -555,7 +558,7 @@ namespace AgileConfig.Client
         }
 
         /// <summary>
-        /// 分发到消息到处理类
+        /// Dispatch messages to the appropriate handler.
         /// </summary>
         private async void ProcessMessage(WebSocketReceiveResult result, ArraySegment<Byte> buffer)
         {
@@ -613,7 +616,7 @@ namespace AgileConfig.Client
         }
 
         /// <summary>
-        /// 复制一个当前的配置字典
+        /// Clone the current configuration dictionary.
         /// </summary>
         /// <returns></returns>
         private Dictionary<string, string> CopyConfigDict()
@@ -631,7 +634,7 @@ namespace AgileConfig.Client
         }
 
         /// <summary>
-        /// 通过http从server拉取所有配置到本地
+        /// Pull all configuration items from the server via HTTP.
         /// </summary>
         public async Task<bool> Load()
         {

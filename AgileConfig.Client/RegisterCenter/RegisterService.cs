@@ -49,7 +49,7 @@ namespace AgileConfig.Client.RegisterCenter
             }
         }
 
-        //是否注册成功
+        // Indicates whether the registration succeeded.
         public bool Registered { get; private set; }
 
 
@@ -90,7 +90,7 @@ namespace AgileConfig.Client.RegisterCenter
             var data = Encoding.UTF8.GetBytes(json);
             var random = new RandomServers(_options.Nodes);
             while (!random.IsComplete)
-            {   //随机一个节点尝试移除
+            {   // Attempt removal on each node in random order.
                 var host = random.Next();
                 var postUrl = host + (host.EndsWith("/") ? "" : "/") + $"api/registercenter/{_uniqueId}";
                 try
@@ -136,7 +136,7 @@ namespace AgileConfig.Client.RegisterCenter
                     {
                         var random = new RandomServers(_options.Nodes);
                         while (!random.IsComplete)
-                        {   //随机一个节点尝试注册
+                        {   // Attempt registration on each node in random order.
                             var host = random.Next();
                             var postUrl = host + (host.EndsWith("/") ? "" : "/") + $"api/registercenter";
                             try

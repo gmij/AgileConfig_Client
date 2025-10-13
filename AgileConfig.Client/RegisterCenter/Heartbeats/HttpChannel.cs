@@ -28,7 +28,7 @@ namespace AgileConfig.Client.RegisterCenter.Heartbeats
             var json = JsonSerializer.Serialize(param);
             var data = Encoding.UTF8.GetBytes(json);
             while (!random.IsComplete)
-            {   //随机一个节点尝试移除
+            {   // Try removing one random node at a time.
                 var host = random.Next();
                 var postUrl = host + (host.EndsWith("/") ? "" : "/") + $"api/registercenter/heartbeat";
                 try
@@ -40,7 +40,7 @@ namespace AgileConfig.Client.RegisterCenter.Heartbeats
                         _logger.LogTrace($"HttpChannel send a heartbeat to {postUrl} success .");
 
                         var content = await HttpUtil.GetResponseContentAsync(resp);
-                        MessageCenter.Receive(content); //往外发送消息
+                        MessageCenter.Receive(content); // Forward the server response.
                     }
                     else
                     {
