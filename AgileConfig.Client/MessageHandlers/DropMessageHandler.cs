@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 namespace AgileConfig.Client.MessageHandlers
 {
     /// <summary>
-    /// 老版本的服务端回复配置client的心跳消息的处理类
+    /// Handler for legacy heartbeat messages returned by the configuration server.
     /// </summary>
     class DropMessageHandler
     {

@@ -52,7 +52,7 @@ namespace AgileConfigMVCSample.Controllers
         }
 
         /// <summary>
-        /// 使用IConfiguration读取配置
+        /// Read configuration values via <see cref="IConfiguration"/>.
         /// </summary>
         /// <returns></returns>
         public IActionResult ByIConfiguration()
@@ -67,7 +67,7 @@ namespace AgileConfigMVCSample.Controllers
         }
 
         /// <summary>
-        /// 直接使用ConfigClient的实例读取配置
+        /// Read configuration values directly from <see cref="IConfigClient"/>.
         /// </summary>
         /// <returns></returns>
         public IActionResult ByInstance()
@@ -82,7 +82,7 @@ namespace AgileConfigMVCSample.Controllers
         }
 
         /// <summary>
-        /// 使用Options模式读取配置
+        /// Read configuration values via the Options pattern.
         /// </summary>
         /// <returns></returns>
         public IActionResult ByOptions()

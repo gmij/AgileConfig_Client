@@ -69,7 +69,7 @@ namespace AgileConfig.Client.RegisterCenter
                             if (!ver.Equals(DataVersion, StringComparison.CurrentCultureIgnoreCase))
                             {
                                 _logger.LogInformation($"server return service infos version {ver} is different from local version {DataVersion} so refresh .");
-                                //如果服务端跟客户端的版本不一样直接刷新
+                                // Refresh immediately if the server version differs from the local one.
                                 _ = RefreshAsync();
                             }
                             return;
@@ -84,7 +84,7 @@ namespace AgileConfig.Client.RegisterCenter
         }
 
         /// <summary>
-        /// 是否读取的事本地缓存的服务
+        /// Indicates whether the service list was loaded from the local cache.
         /// </summary>
         public bool IsLoadFromLocal
         {
@@ -131,7 +131,7 @@ namespace AgileConfig.Client.RegisterCenter
             int failCount = 0;
             var random = new RandomServers(_configClient.Options.Nodes);
             while (!random.IsComplete)
-            {   //随机一个节点尝试移除
+            {   // Try removing one random node at a time.
                 var host = random.Next();
                 var getUrl = host + (host.EndsWith("/") ? "" : "/") + $"api/registercenter/services";
                 try
@@ -175,7 +175,7 @@ namespace AgileConfig.Client.RegisterCenter
         }
 
         /// <summary>
-        /// 从本地缓存文件加载服务信息
+        /// Load service information from the local cache file.
         /// </summary>
         private void LoadServicesFromLocal()
         {
@@ -195,7 +195,7 @@ namespace AgileConfig.Client.RegisterCenter
         }
 
         /// <summary>
-        /// 保证cache文件夹存在
+        /// Ensure the cache directory exists.
         /// </summary>
         private void EnsureCacheDir()
         {
@@ -227,7 +227,7 @@ namespace AgileConfig.Client.RegisterCenter
         }
 
         /// <summary>
-        /// 尝试从本地文件读取缓存的服务信息
+        /// Try to read cached service information from a local file.
         /// </summary>
         /// <returns></returns>
         private string ReadServiceInfosContentFromLocal()

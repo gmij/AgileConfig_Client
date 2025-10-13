@@ -30,7 +30,7 @@ namespace AgileConfig.Client
 
         public string CacheDirectory { get; set; }
         /// <summary>
-        /// 缓存加密
+        /// Encrypt cached configuration files.
         /// </summary>
         /// <value></value>
         public bool ConfigCacheEncrypt { get; set; } = false;
@@ -43,13 +43,13 @@ namespace AgileConfig.Client
         public Action<ConfigChangedArg> ConfigChanged;
 
         /// <summary>
-        /// 最新的配置被加载到本地后触发。
+        /// Raised after the newest configuration has been loaded locally.
         /// </summary>
         public Action<ConfigReloadedArgs> ReLoaded;
 
         /// <summary>
-        /// 确定当前目录是否存在 json 配置文件，使用多种获取目录的形式来确认。
-        /// 如果存在则返回当前目录的确切路径。
+        /// Ensure the current directory contains the json configuration file and
+        /// return the exact directory path when it does.
         /// </summary>
         /// <param name="json"></param>
         /// <returns></returns>
@@ -172,15 +172,15 @@ namespace AgileConfig.Client
             var serviceId = config["AgileConfig:serviceRegister:serviceId"];
             if (string.IsNullOrWhiteSpace(serviceId))
             {
-                // 如果配置文件上没有填尝试从本地恢复id
+                // Try recovering the ID from the local cache if it is missing in configuration.
                 serviceId = TryGetIdFromLocal(cacheDir, appId);
                 DefaultConsoleLogger.LogInformation("because serviceId is empty in the configuration , try to read serviceId from local cache file , the id = " + serviceId);
             }
             if (string.IsNullOrWhiteSpace(serviceId))
             {
-                // 如果从本地恢复 id 失败，则生产一个 guid
+                // Generate a GUID when restoration fails.
                 serviceId = Guid.NewGuid().ToString("N");
-                // 保存到本地以便恢复，防止服务重启后又生产一个 guid
+                // Persist it locally so the same ID is reused after restarts.
                 WriteIdToLocal(cacheDir, appId, serviceId);
                 DefaultConsoleLogger.LogInformation("generate a serviceId = " + serviceId);
             }
