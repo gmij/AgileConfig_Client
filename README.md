@@ -77,6 +77,16 @@ Call the `UseAgileConfig` extension on `Program` to add the AgileConfig configur
                 });
 ```
 
+### Switch appsettings json file by environment ?
+
+```
+var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")
+                  ?? Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT");
+
+builder.Host.UseAgileConfig($"appsetting.{environment}.json");
+
+```
+
 ## Read configuration
 
 AgileConfig supports the standard ASP.NET Core `IConfiguration` and `IOptions` patterns. You can also read values directly from an `AgileConfigClient` instance.
