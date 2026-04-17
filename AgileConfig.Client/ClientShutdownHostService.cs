@@ -13,6 +13,8 @@ namespace AgileConfig.Client
 
         public ClientShutdownHostService(IConfigClient configClient)
         {
+            // Resolve IConfigClient when hosted service starts so logger rebinding is not
+            // dependent on application code explicitly injecting IConfigClient.
             _configClient = configClient;
         }
 
